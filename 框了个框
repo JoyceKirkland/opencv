@@ -1,0 +1,141 @@
+#include <iostream>
+#include opencv2/highgui/highgui.hpp
+#include opencv2/imgproc/imgproc.hpp
+
+
+using namespace std;
+使用命名空间cv;
+//为什么换一个亮一点的背景就直接炸了
+//
+
+
+int main()
+{
+    VideoCapture cap(2);
+    cap.open(/home/joyce/Downloads/2.mp4);
+
+
+    while(true)
+    {
+//        cap.open(/home/joyce/Downloads/2.mp4);
+
+
+         Mat frame;
+         cap >> frame;
+
+
+         Mat fhsv;
+//         GaussianBlur(frame,frame,Size(9,9),3);
+         bilateralFilter(frame, fhsv, 6, 100, 3);
+//         cvtColor(frame,fhsv,COLOR_BGR2HSV);
+         cvtColor(fhsv,fhsv,COLOR_BGR2HSV);
+
+
+//         inRange(fhsv,Scalar(0,43,145),Scalar(120,255,255),fhsv);//红蓝绿
+//         inRange(fhsv,Scalar(0,46,150),Scalar(116,255,255),fhsv);//red bule green
+         inRange(fhsv,Scalar(0,0,183),Scalar(120,255,255),fhsv);//red bule green white[效果不太好
+//         inRange(fhsv,Scalar(35,43,46),Scalar(77,255,255),fhsv);//green
+
+
+//         inRange(fhsv,Scalar(0,0,0),Scalar(180,255,46),fhsv);//black
+
+
+//         inRange(fhsv,Scalar(0,0,221),Scalar(180,30,255),fhsv);//white
+
+
+         vector<vector<Point>> contours;
+         vector<Vec4i> hierarchy;
+         findContours(fhsv,contours,hierarchy,RETR_EXTERNAL,CHAIN_APPROX_NONE,Point());
+//         vector<Moments>mu(contours.size());
+         for(unsigned i=0;i<contours.size();i++)
+         {
+
+
+//             if(contours.size()>50)
+//                cout<<contours:<<contours.size()<<endl;
+//                drawContours(frame,contours,i,Scalar(255,255,255),2,8,hierarchy);
+                RotatedRect rect=minAreaRect(contours[i]);
+
+
+                Point2f P[4];
+                rect.points(P);
+                for(int j=0;j<=3;j++)
+                {
+                    if(rect.size.width>40&&rect.size.height>0)
+                    {
+                    line(frame,P[j],P[(j+1)%4],Scalar(0,0,0),4);
+//                    cout<<P[<<j<<]:<<P[j]<<endl;
+
+
+//                    cout<<x:<<rect.center.x<<endl;
+//                    cout<<y:<<rect.center.y<<endl;
+
+
+                    }
+                }
+
+
+//                double srect[contours.size()];
+//                srect[i]=rect.size.height*rect.size.width;
+//                cout<<???<<endl;
+
+
+//         for(int j=0;j<rect.center.x;j++)
+//         {
+//             for(int i=0;i<rect.center.y;i++)
+             {
+//                Vec3f col=fhsv.at<Vec3f>(rect.center.x,rect.center.y);
+
+
+//                Scalar col=fhsv.at<Vec3b>(rect.center.x,rect.center.y);
+//                Scalar col=frame.at<Vec3b>(rect.center.x,rect.center.y);
+
+
+
+
+//               //_____________________________________
+
+
+//                  if((col[0]>=0&&col[0]<=10)&&(col[1]>=43&&
+//                      col[1]>=255)&&(col[2]>=46&&col[2]<=255))
+//                     {
+//                            cout<<red<<endl;
+//                //                        cout<<???<<endl;
+//                     }
+//                  else if((col[0]>=35.0&&col[0]<=77.0)&&(col[1]>=43.0&&
+//                             col[1]<=255.0)&&(col[2]>=46.0&&col[2]<=255.0))
+//                  {
+//                            cout<<green<<endl;
+//                  }
+////               else if((col[0]>=0&&col[0]<=180)&&(col[1]>=0&&
+////                         col[1]<=255)&&(col[2]>=0&&col[2]<=46))
+////               {
+////                        cout<<black<<endl;
+////                }
+//                 else if((col[0]>=100&&col[0]<=124)&&(col[1]>=43&&
+//                        col[1]<=255)&&(col[2]>=46&&col[2]<=255))
+//                  {
+//                           cout<<blue<<endl;
+//                  }
+//                  else
+//                  {
+////                      cout<<inside<<endl;
+//                  }
+     //___________________________________________
+                }
+//             }
+    }
+//         imshow(fhsv,fhsv);
+//         imshow(special,special);
+         imshow(frame,frame);
+
+
+         int key = waitKey(1);
+            if(char(key) == 27)break;
+
+
+
+
+    }
+    return 0;
+}
